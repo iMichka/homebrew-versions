@@ -35,6 +35,7 @@ class Cmake31 < Formula
 
   depends_on :python => :build if MacOS.version <= :snow_leopard && build.with?("docs")
   depends_on "xz" # For LZMA
+  depends_on NoExpatFramework
 
   conflicts_with "cmake", :because => "both install a cmake binary"
   conflicts_with "cmake30", :because => "both install a cmake binary"
@@ -67,8 +68,6 @@ class Cmake31 < Formula
     url "https://pypi.python.org/packages/source/M/MarkupSafe/MarkupSafe-0.23.tar.gz"
     sha256 "a4ec1aff59b95a14b45eb2e23761a0179e98319da5a7eb76b56ea8cdc7b871c3"
   end
-
-  depends_on NoExpatFramework
 
   def install
     if build.with? "docs"

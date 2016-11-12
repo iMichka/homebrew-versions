@@ -33,11 +33,14 @@ class Cmake30 < Formula
 
   option "without-docs", "Don't build man pages"
   depends_on :python => :build if MacOS.version <= :snow_leopard && build.with?("docs")
-
-  depends_on "qt" => :optional
+  depends_on NoExpatFramework
 
   conflicts_with "cmake", :because => "both install a cmake binary"
   conflicts_with "cmake31", :because => "both install a cmake binary"
+
+  # The `with-qt` GUI option was removed due to circular dependencies if
+  # CMake is built with Qt support and Qt is built with MySQL support as MySQL uses CMake.
+  # For the GUI application please instead use brew install caskroom/cask/cmake.
 
   resource "sphinx" do
     url "https://pypi.python.org/packages/source/S/Sphinx/Sphinx-1.2.3.tar.gz"
@@ -63,8 +66,6 @@ class Cmake30 < Formula
     url "https://pypi.python.org/packages/source/M/MarkupSafe/MarkupSafe-0.23.tar.gz"
     sha256 "a4ec1aff59b95a14b45eb2e23761a0179e98319da5a7eb76b56ea8cdc7b871c3"
   end
-
-  depends_on NoExpatFramework
 
   def install
     if build.with? "docs"
@@ -93,12 +94,9 @@ class Cmake30 < Formula
       args << "--sphinx-man" << "--sphinx-build=#{buildpath}/sphinx/bin/sphinx-build"
     end
 
-    args << "--qt-gui" if build.with? "qt"
-
     system "./bootstrap", *args
     system "make"
     system "make", "install"
-    bin.install_symlink Dir["#{prefix}/CMake.app/Contents/bin/*"] if build.with? "qt"
   end
 
   test do
